@@ -154,69 +154,69 @@
     let timer;
     let beepTimer;
 
-function playAudio(text) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  speechSynthesis.speak(utterance);
-}
-
-function playBeep() {
-  const beep = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
-  beep.play();
-}
-
-function startTimer() {
-  document.getElementById("status").textContent = "Stand By...";
-  playAudio("Stand by");
-
-  setTimeout(() => {
-    playBeep();
-    document.getElementById("status").textContent = "GO!";
-
-    if (parTime > 0) {
-      beepTimer = setTimeout(() => {
-        playBeep();
-      }, parTime * 1000);
+    function playAudio(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
     }
 
-    if (repeatOn) scheduleNextRep();
-  }, 3000);
-}
+    function playBeep() {
+      const beep = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
+      beep.play();
+    }
 
-function stopTimer() {
-  // Reset repetitions and stop repeat
-  reps = 0;
-  repeatOn = false;
-  document.getElementById("repeatStatus").textContent = "OFF";
-  clearTimeout(timer);
-  clearTimeout(beepTimer);
-  document.getElementById("status").textContent = "Timer Restarted";
-}
+    function startTimer() {
+      document.getElementById("status").textContent = "Stand By...";
+      playAudio("Stand by");
 
-function updateParTime() {
-  parTime = parseFloat(document.getElementById("parTimeInput").value);
-  if (isNaN(parTime)) parTime = 0.0;
-  parTime = Math.max(0, Math.min(10, parTime));
-  document.getElementById("parTimeInput").value = parTime.toFixed(1);
-}
+      setTimeout(() => {
+        playBeep();
+        document.getElementById("status").textContent = "GO!";
 
-function toggleRepeat() {
-  repeatOn = !repeatOn;
-  document.getElementById("repeatStatus").textContent = repeatOn ? "ON" : "OFF";
-}
+        if (parTime > 0) {
+          beepTimer = setTimeout(() => {
+            playBeep();
+          }, parTime * 1000);
+        }
 
-function updateRepeatDelay() {
-  repeatDelay = parseFloat(document.getElementById("repeatDelayInput").value);
-  if (isNaN(repeatDelay)) repeatDelay = 3.0;
-  repeatDelay = Math.max(0, Math.min(10, repeatDelay));
-  document.getElementById("repeatDelayInput").value = repeatDelay.toFixed(1);
-}
+        if (repeatOn) scheduleNextRep();
+      }, 3000);
+    }
 
-function toggleChaseClock() {
-  chaseClockOn = !chaseClockOn;
-  document.getElementById("chaseClockStatus").textContent = chaseClockOn ? "ON" : "OFF";
-}
+    function stopTimer() {
+      // Reset repetitions and stop repeat
+      reps = 0;
+      repeatOn = false;
+      document.getElementById("repeatStatus").textContent = "OFF";
+      clearTimeout(timer);
+      clearTimeout(beepTimer);
+      document.getElementById("status").textContent = "Timer Restarted";
+    }
 
-function scheduleNextRep() {
+    function updateParTime() {
+      parTime = parseFloat(document.getElementById("parTimeInput").value);
+      if (isNaN(parTime)) parTime = 0.0;
+      parTime = Math.max(0, Math.min(10, parTime));
+      document.getElementById("parTimeInput").value = parTime.toFixed(1);
+    }
+
+    function toggleRepeat() {
+      repeatOn = !repeatOn;
+      document.getElementById("repeatStatus").textContent = repeatOn ? "ON" : "OFF";
+    }
+
+    function updateRepeatDelay() {
+      repeatDelay = parseFloat(document.getElementById("repeatDelayInput").value);
+      if (isNaN(repeatDelay)) repeatDelay = 3.0;
+      repeatDelay = Math.max(0, Math.min(10, repeatDelay));
+      document.getElementById("repeatDelayInput").value = repeatDelay.toFixed(1);
+    }
+
+    function toggleChaseClock() {
+      chaseClockOn = !chaseClockOn;
+      document.getElementById("chaseClockStatus").textContent = chaseClockOn ? "ON" : "OFF";
+    }
+
+    function scheduleNextRep() {
   reps++;
 
   let totalDelay = parTime > 0 ? (parTime * 1000) + (repeatDelay * 1000) : repeatDelay * 1000;
@@ -229,7 +229,6 @@ function scheduleNextRep() {
     startTimer();
   }, totalDelay);
 }
-
 // Add both touch and click event listeners for mobile devices
 function addEventListeners() {
   const startBtn = document.getElementById("startBtn");
@@ -250,7 +249,8 @@ function addEventListeners() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', addEventListeners);
-  </script>
+    document.addEventListener('DOMContentLoaded', addEventListeners);
+    document.getElementById("startBtn").addEventListener("click", startTimer);
+    document.getElementById("stopBtn").addEventListener("click", stopTimer);  </script>
 </body>
 </html>
