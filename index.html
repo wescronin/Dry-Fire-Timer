@@ -147,98 +147,125 @@
   </div>
 
   <script>
-    let parTime = 0.0;
-    let repeatOn = false;
-    let repeatDelay = 3.0;
-    let chaseClockOn = false;
-    let reps = 0;
-    let timer;
-    let beepTimer;
+    <script>
+  let parTime = 0.0;
+  let repeatOn = false;
+  let repeatDelay = 3.0;
+  let chaseClockOn = false;
+  let reps = 0;
+  let timer;
+  let beepTimer;
 
-    function playAudio(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      speechSynthesis.speak(utterance);
+  function playAudio(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onstart = function () {
+      console.log('Audio started'); // Debugging
+    };
+    speechSynthesis.speak(utterance);
+  }
+
+  function playBeep() {
+    const beep = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
+    beep.play();
+  }
+
+  function startTimer() {
+    document.getElementById("status").textContent = "Stand By...";
+    playAudio("Stand by");
+
+    setTimeout(() => {
+      playBeep();
+      document.getElementById("status").textContent = "GO!";
+
+      if (parTime > 0) {
+        beepTimer = setTimeout(() => {
+          playBeep();
+        }, parTime * 1000);
+      }
+
+      if (repeatOn) scheduleNextRep();
+    }, 3000);
+  }
+
+  function stopTimer() {
+    reps = 0;
+    repeatOn = false;
+    document.getElementById("repeatStatus").textContent = "OFF";
+    clearTimeout(timer);
+    clearTimeout(beepTimer);
+    document.getElementById("status").textContent = "Timer Restarted";
+  }
+
+  function updateParTime() {
+    parTime = parseFloat(document.getElementById("parTimeInput").value);
+    if (isNaN(parTime)) parTime = 0.0;
+    parTime = Math.max(0, Math.min(10, parTime));
+    document.getElementById("parTimeInput").value = parTime.toFixed(1);
+  }
+
+  function toggleRepeat() {
+    repeatOn = !repeatOn;
+    document.getElementById("repeatStatus").textContent = repeatOn ? "ON" : "OFF";
+    if (repeatOn) {
+      // Trigger audio request on repeat to prevent issues with mobile autoplay
+      playAudio("Repeating");
     }
+  }
 
-    function playBeep() {
-      const beep = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
-      beep.play();
-    }
+  function updateRepeatDelay() {
+    repeatDelay = parseFloat(document.getElementById("repeatDelayInput").value);
+    if (isNaN(repeatDelay)) repeatDelay = 3.0;
+    repeatDelay = Math.max(0, Math.min(10, repeatDelay));
+    document.getElementById("repeatDelayInput").value = repeatDelay.toFixed(1);
+  }
 
-    function startTimer() {
-      document.getElementById("status").textContent = "Stand By...";
-      playAudio("Stand by");
+  function toggleChaseClock() {
+    chaseClockOn = !chaseClockOn;
+    document.getElementById("chaseClockStatus").textContent = chaseClockOn ? "ON" : "OFF";
+  }
 
-      setTimeout(() => {
-        playBeep();
-        document.getElementById("status").textContent = "GO!";
+  function scheduleNextRep() {
+    reps++;
 
-        if (parTime > 0) {
-          beepTimer = setTimeout(() => {
-            playBeep();
-          }, parTime * 1000);
-        }
+    let totalDelay = parTime > 0 ? (parTime * 1000) + (repeatDelay * 1000) : repeatDelay * 1000;
 
-        if (repeatOn) scheduleNextRep();
-      }, 3000);
-    }
+    timer = setTimeout(() => {
+      if (chaseClockOn && reps % 5 === 0 && parTime > 0.2) {
+        parTime -= 0.2;
+        document.getElementById("parTimeInput").value = parTime.toFixed(1);
+      }
+      startTimer();
+    }, totalDelay);
+  }
 
-    function stopTimer() {
-      reps = 0;
-      repeatOn = false;
-      document.getElementById("repeatStatus").textContent = "OFF";
-      clearTimeout(timer);
-      clearTimeout(beepTimer);
-      document.getElementById("status").textContent = "Timer Restarted";
-    }
+  function addEventListeners() {
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
 
-    function updateParTime() {
-      parTime = parseFloat(document.getElementById("parTimeInput").value);
-      if (isNaN(parTime)) parTime = 0.0;
-      parTime = Math.max(0, Math.min(10, parTime));
-      document.getElementById("parTimeInput").value = parTime.toFixed(1);
-    }
-
-    function toggleRepeat() {
-      repeatOn = !repeatOn;
-      document.getElementById("repeatStatus").textContent = repeatOn ? "ON" : "OFF";
-    }
-
-    function updateRepeatDelay() {
-      repeatDelay = parseFloat(document.getElementById("repeatDelayInput").value);
-      if (isNaN(repeatDelay)) repeatDelay = 3.0;
-      repeatDelay = Math.max(0, Math.min(10, repeatDelay));
-      document.getElementById("repeatDelayInput").value = repeatDelay.toFixed(1);
-    }
-
-    function toggleChaseClock() {
-      chaseClockOn = !chaseClockOn;
-      document.getElementById("chaseClockStatus").textContent = chaseClockOn ? "ON" : "OFF";
-    }
-
-    function scheduleNextRep() {
-      reps++;
-      let totalDelay = parTime > 0 ? (parTime * 1000) + (repeatDelay * 1000) : repeatDelay * 1000;
-      timer = setTimeout(() => {
-        if (chaseClockOn && reps % 5 === 0 && parTime > 0.2) {
-          parTime -= 0.2;
-          document.getElementById("parTimeInput").value = parTime.toFixed(1);
-        }
-        startTimer();
-      }, totalDelay);
-    }
-
-    document.getElementById("startBtn").addEventListener("click", startTimer);
-    document.getElementById("stopBtn").addEventListener("click", stopTimer);
-    document.getElementById("startBtn").addEventListener("touchstart", (e) => {
+    startBtn.addEventListener("click", (e) => {
       e.preventDefault();
       startTimer();
     });
-    document.getElementById("stopBtn").addEventListener("touchstart", (e) => {
+
+    stopBtn.addEventListener("click", (e) => {
       e.preventDefault();
       stopTimer();
     });
-  </script>
+
+    startBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      startTimer();
+    });
+
+    stopBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      stopTimer();
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", addEventListeners);
+</script>
+
 </body>
 </html>
 
