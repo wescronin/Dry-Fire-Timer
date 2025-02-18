@@ -5,7 +5,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
- <meta charset="UTF-8">
+<meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dry-Fire Shot Timer</title>
   <style>
@@ -213,38 +213,11 @@
     startTimer();
   }, totalDelay);
 }
-// Add both touch and click event listeners for mobile devices
-function addEventListeners() {
-  function addEventListeners() {
-  const startBtn = document.getElementById("startBtn");
-  const stopBtn = document.getElementById("stopBtn");
 
-  // Handle both touch and click events
-  startBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    startTimer();
-  });
 
-  stopBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    stopTimer();
-  });
-
-  // Handle touch events for mobile devices
-  startBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    startTimer();
-  });
-
-  stopBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    stopTimer();
-  });
-}
-
-document.getElementById("startBtn").addEventListener("click", startTimer);
-document.getElementById("stopBtn").addEventListener("click", stopTimer);
-
+    document.getElementById("startBtn").addEventListener("click", startTimer);
+    document.getElementById("stopBtn").addEventListener("click", stopTimer);
   </script>
 </body>
 </html>
+
