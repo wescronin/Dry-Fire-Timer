@@ -147,7 +147,6 @@
   </div>
 
   <script>
-    <script>
   let parTime = 0.0;
   let repeatOn = false;
   let repeatDelay = 3.0;
@@ -158,9 +157,6 @@
 
   function playAudio(text) {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.onstart = function () {
-      console.log('Audio started'); // Debugging
-    };
     speechSynthesis.speak(utterance);
   }
 
@@ -207,7 +203,6 @@
     repeatOn = !repeatOn;
     document.getElementById("repeatStatus").textContent = repeatOn ? "ON" : "OFF";
     if (repeatOn) {
-      // Trigger audio request on repeat to prevent issues with mobile autoplay
       playAudio("Repeating");
     }
   }
@@ -238,7 +233,8 @@
     }, totalDelay);
   }
 
-  function addEventListeners() {
+  // Add event listeners directly without nesting
+  document.addEventListener("DOMContentLoaded", function() {
     const startBtn = document.getElementById("startBtn");
     const stopBtn = document.getElementById("stopBtn");
 
@@ -252,6 +248,7 @@
       stopTimer();
     });
 
+    // Handle touch events for mobile devices
     startBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
       startTimer();
@@ -261,9 +258,7 @@
       e.preventDefault();
       stopTimer();
     });
-  }
-
-  document.addEventListener("DOMContentLoaded", addEventListeners);
+  });
 </script>
 
 </body>
