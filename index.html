@@ -154,6 +154,7 @@
   let reps = 0;
   let timer;
   let beepTimer;
+  let wakeLock = null;
 
   // Web Audio API for beeps
   let audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -171,6 +172,15 @@
     speechSynthesis.speak(utterance);
   }
 
+  async function preventSleep() {
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('Screen Wake Lock is active');
+    } catch (err) {
+      console.error('Screen Wake Lock failed:', err);
+    }
+  }
+
   function startTimer() {
     document.getElementById("status").textContent = "Stand By...";
     playAudio("Stand by");
@@ -186,6 +196,7 @@
       }
 
       if (repeatOn) scheduleNextRep();
+      preventSleep(); // Prevent the screen from going to sleep
     }, 3000);
   }
 
@@ -196,6 +207,7 @@
     clearTimeout(timer);
     clearTimeout(beepTimer);
     document.getElementById("status").textContent = "Timer Restarted";
+    if (wakeLock) wakeLock.release();
   }
 
   function updateParTime() {
