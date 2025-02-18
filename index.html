@@ -5,7 +5,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
- <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dry-Fire Shot Timer</title>
   <style>
@@ -38,17 +38,21 @@
     }
     button {
       width: 80%;
-      padding: 12px;
+      padding: 15px;
       margin: 10px;
-      border-radius: 5px;
+      border-radius: 25px;
       background-color: #1e90ff;
       color: white;
       font-weight: bold;
-      font-size: 1.2em;
+      font-size: 1.3em;
       max-width: 250px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s ease-in-out;
     }
     button:hover {
       background-color: #187bcd;
+      transform: scale(1.1);
     }
     .adjust-button {
       width: 50px;
@@ -58,14 +62,17 @@
       align-items: center;
       justify-content: center;
       border: none;
-      border-radius: 8px;
+      border-radius: 50%;
       background-color: #1e90ff;
       color: white;
       font-weight: bold;
       margin: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s ease-in-out;
     }
     .adjust-button:hover {
       background-color: #187bcd;
+      transform: scale(1.1);
     }
     .genie {
       font-size: 1em;
@@ -112,6 +119,12 @@
   <div class="container">
     <h1>Dry-Fire Shot Timer</h1>
     <h2>🧞‍♂️ HF Genie</h2>
+
+    <!-- Start Delay Toggle -->
+    <div>
+      <input type="checkbox" id="startDelayToggle" /> Start Delay
+    </div>
+
     <button id="startBtn">Start</button>
     <button id="stopBtn">Stop</button>
     <p id="status">Press Start to Begin</p>
@@ -136,7 +149,7 @@
       <p class="small-text">Chase the Clock: Every 5 repetitions, the par time decreases by 0.2 seconds.</p>
     </div>
   </div>
-  
+
   <div class="container footer">
     <a href="https://hit-factor-genie.netlify.app/" target="_blank">Hit Factor Genie</a><br>
     <a href="https://usuckatshooting.com" target="_blank">USuckAtShooting.com</a><br>
@@ -146,15 +159,16 @@
     <a href="https://usuckatshooting.bigcartel.com/" target="_blank">Support Me</a>
   </div>
 
-  <script>
+<script>
   let parTime = 0.0;
   let repeatOn = false;
   let repeatDelay = 3.0;
-  let chaseClockOn = false;
   let reps = 0;
   let timer;
   let beepTimer;
   let wakeLock = null;
+  let chaseClockOn = false; // Chase the clock feature
+  let startDelay = false;
 
   // Web Audio API for beeps
   let audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -172,6 +186,14 @@
     speechSynthesis.speak(utterance);
   }
 
+  // Haptic feedback function
+  function triggerHaptic() {
+    if (navigator.vibrate) {
+      navigator.vibrate(100); // 100ms vibration
+    }
+  }
+
+  // Prevent screen from going to sleep
   async function preventSleep() {
     try {
       wakeLock = await navigator.wakeLock.request('screen');
@@ -181,25 +203,64 @@
     }
   }
 
+  // Start the timer with a 3-second delay and par time functionality
   function startTimer() {
-    document.getElementById("status").textContent = "Stand By...";
-    playAudio("Stand by");
+    if (startDelay) {
+      // If start delay is enabled, add 3-second delay before "Stand By"
+      document.getElementById("status").textContent = "Wait...";
+     
 
-    setTimeout(() => {
-      playBeep();
-      document.getElementById("status").textContent = "GO!";
+      setTimeout(() => {
+        document.getElementById("status").textContent = "Stand By...";
+        playAudio("Stand by");
 
-      if (parTime > 0) {
-        beepTimer = setTimeout(() => {
+        // After 3 seconds, trigger the "Go!" message and haptic feedback
+        setTimeout(() => {
           playBeep();
-        }, parTime * 1000);
-      }
+          triggerHaptic(); // Trigger haptic feedback
+          document.getElementById("status").textContent = "GO!";
 
-      if (repeatOn) scheduleNextRep();
-      preventSleep(); // Prevent the screen from going to sleep
-    }, 3000);
+          // Handle par time if set
+          if (parTime > 0) {
+            beepTimer = setTimeout(() => {
+              playBeep();
+              triggerHaptic(); // Second beep for par time
+            }, parTime * 1000);
+          }
+
+          // If repeat is on, start the repeat cycle
+          if (repeatOn) scheduleNextRep();
+          preventSleep(); // Prevent the screen from going to sleep
+        }, 3000); // 3-second delay before "Go!" after "Stand by"
+
+      }, 3000); // 3-second start delay before "Stand By"
+    } else {
+      // If start delay is disabled, proceed directly to "Stand By" and "Go!"
+      document.getElementById("status").textContent = "Stand By...";
+      playAudio("Stand by");
+
+      // After 3 seconds, trigger the "Go!" message and haptic feedback
+      setTimeout(() => {
+        playBeep();
+        triggerHaptic(); // Trigger haptic feedback
+        document.getElementById("status").textContent = "GO!";
+
+        // Handle par time if set
+        if (parTime > 0) {
+          beepTimer = setTimeout(() => {
+            playBeep();
+            triggerHaptic(); // Second beep for par time
+          }, parTime * 1000);
+        }
+
+        // If repeat is on, start the repeat cycle
+        if (repeatOn) scheduleNextRep();
+        preventSleep(); // Prevent the screen from going to sleep
+      }, 3000); // 3-second delay before "Go!" after "Stand by"
+    }
   }
 
+  // Stop the timer and reset settings
   function stopTimer() {
     reps = 0;
     repeatOn = false;
@@ -210,6 +271,7 @@
     if (wakeLock) wakeLock.release();
   }
 
+  // Update par time from the input field
   function updateParTime() {
     parTime = parseFloat(document.getElementById("parTimeInput").value);
     if (isNaN(parTime)) parTime = 0.0;
@@ -217,14 +279,17 @@
     document.getElementById("parTimeInput").value = parTime.toFixed(1);
   }
 
+  // Toggle the repeat function on or off
   function toggleRepeat() {
     repeatOn = !repeatOn;
     document.getElementById("repeatStatus").textContent = repeatOn ? "ON" : "OFF";
     if (repeatOn) {
       playAudio("Repeating");
+      triggerHaptic(); // Trigger haptic feedback for repeat toggle
     }
   }
 
+  // Update the delay between reps from the input field
   function updateRepeatDelay() {
     repeatDelay = parseFloat(document.getElementById("repeatDelayInput").value);
     if (isNaN(repeatDelay)) repeatDelay = 3.0;
@@ -232,32 +297,46 @@
     document.getElementById("repeatDelayInput").value = repeatDelay.toFixed(1);
   }
 
+  // Toggle the chase clock feature on or off
   function toggleChaseClock() {
     chaseClockOn = !chaseClockOn;
     document.getElementById("chaseClockStatus").textContent = chaseClockOn ? "ON" : "OFF";
+    if (chaseClockOn) {
+      playAudio("Chasing the clock");
+    }
   }
 
+  // Decrease par time every 5 reps if chase clock is on (without sound)
+  function adjustParTime() {
+    if (chaseClockOn && reps % 5 === 0 && parTime > 0.2) {
+      parTime -= 0.2;
+      parTime = Math.max(0.2, parTime); // Prevent par time from going below 0.2
+      document.getElementById("parTimeInput").value = parTime.toFixed(1);
+    }
+  }
+
+  // Schedule the next rep with proper timing and repeat functionality
   function scheduleNextRep() {
     reps++;
+
+    // Adjust the par time after every 5 reps if chase clock is enabled
+    adjustParTime();
 
     let totalDelay = parTime > 0 ? (parTime * 1000) + (repeatDelay * 1000) : repeatDelay * 1000;
 
     timer = setTimeout(() => {
-      if (chaseClockOn && reps % 5 === 0 && parTime > 0.2) {
-        parTime -= 0.2;
-        document.getElementById("parTimeInput").value = parTime.toFixed(1);
-      }
-      startTimer();
-    }, totalDelay);
+      startTimer(); // Start the next timer cycle after the calculated delay
+    }, totalDelay); // Total delay is based on par time and repeat delay
   }
 
-  // Add event listeners directly without nesting
+  // Add event listeners for buttons
   document.addEventListener("DOMContentLoaded", function() {
     const startBtn = document.getElementById("startBtn");
     const stopBtn = document.getElementById("stopBtn");
 
     startBtn.addEventListener("click", (e) => {
       e.preventDefault();
+      startDelay = document.getElementById("startDelayToggle").checked;
       startTimer();
     });
 
@@ -269,6 +348,7 @@
     // Handle touch events for mobile devices
     startBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
+      startDelay = document.getElementById("startDelayToggle").checked;
       startTimer();
     });
 
@@ -277,7 +357,7 @@
       stopTimer();
     });
   });
-  </script>
+</script>
 
 </body>
 </html>
