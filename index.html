@@ -5,7 +5,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta charset="UTF-8">
+ <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dry-Fire Shot Timer</title>
   <style>
@@ -15,9 +15,6 @@
       background-color: #2f2f2f;
       color: #fff;
       text-align: center;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
     }
     .container {
       max-width: 90%;
@@ -37,7 +34,7 @@
       color: #1e90ff;
     }
     button {
-      width: 80%;
+      width: 40%;
       padding: 12px;
       margin: 10px;
       border-radius: 5px;
@@ -45,7 +42,6 @@
       color: white;
       font-weight: bold;
       font-size: 1.2em;
-      max-width: 250px;
     }
     button:hover {
       background-color: #187bcd;
@@ -86,24 +82,12 @@
       margin: 0 10px;
     }
     input[type="number"] {
-      width: 80%;
+      width: 80px;
       padding: 10px;
       margin: 20px;
       font-size: 1.2em;
       border-radius: 5px;
       text-align: center;
-      max-width: 250px;
-    }
-    @media screen and (max-width: 600px) {
-      h1 {
-        font-size: 2em;
-      }
-      h2 {
-        font-size: 1.2em;
-      }
-      button {
-        width: 90%;
-      }
     }
   </style>
 </head>
@@ -142,9 +126,9 @@
     <a href="https://instagram.com/wes.cronin" target="_blank">Wes Cronin</a><br>
     <a href="https://instagram.com/usuckatshooting" target="_blank">USuckAtShooting</a><br>
     <a href="https://www.youtube.com/usuckatshooting" target="_blank">YouTube</a><br>
-    <a href="https://usuckatshooting.bigcartel.com/" target="_blank">Support Me / Shirts</a>
+    <a href="https://usuckatshooting.bigcartel.com/" target="_blank">Support Me</a>
   </div>
-  
+    
   <script>
     let parTime = 0.0;
     let repeatOn = false;
@@ -251,6 +235,7 @@ function addEventListeners() {
 
     document.addEventListener('DOMContentLoaded', addEventListeners);
     document.getElementById("startBtn").addEventListener("click", startTimer);
-    document.getElementById("stopBtn").addEventListener("click", stopTimer);  </script>
+    document.getElementById("stopBtn").addEventListener("click", stopTimer);
+  </script>
 </body>
 </html>
