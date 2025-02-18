@@ -5,7 +5,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
-  <meta charset="UTF-8">
+ <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dry-Fire Shot Timer</title>
   <style>
@@ -155,14 +155,20 @@
   let timer;
   let beepTimer;
 
+  // Web Audio API for beeps
+  let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  let beepAudio = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
+
+  // Play beep sound
+  function playBeep() {
+    beepAudio.play();
+    beepAudio.currentTime = 0; // Reset to start in case it was still playing
+  }
+
+  // Original speech synthesis function
   function playAudio(text) {
     const utterance = new SpeechSynthesisUtterance(text);
     speechSynthesis.speak(utterance);
-  }
-
-  function playBeep() {
-    const beep = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
-    beep.play();
   }
 
   function startTimer() {
