@@ -154,84 +154,103 @@
     let timer;
     let beepTimer;
 
-    function playAudio(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      speechSynthesis.speak(utterance);
-    }
+function playAudio(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  speechSynthesis.speak(utterance);
+}
 
-    function playBeep() {
-      const beep = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
-      beep.play();
-    }
+function playBeep() {
+  const beep = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
+  beep.play();
+}
 
-    function startTimer() {
-      document.getElementById("status").textContent = "Stand By...";
-      playAudio("Stand by");
+function startTimer() {
+  document.getElementById("status").textContent = "Stand By...";
+  playAudio("Stand by");
 
-      setTimeout(() => {
+  setTimeout(() => {
+    playBeep();
+    document.getElementById("status").textContent = "GO!";
+
+    if (parTime > 0) {
+      beepTimer = setTimeout(() => {
         playBeep();
-        document.getElementById("status").textContent = "GO!";
-
-        if (parTime > 0) {
-          beepTimer = setTimeout(() => {
-            playBeep();
-          }, parTime * 1000);
-        }
-
-        if (repeatOn) scheduleNextRep();
-      }, 3000);
+      }, parTime * 1000);
     }
 
-    function stopTimer() {
-      // Reset repetitions and stop repeat
-      reps = 0;
-      repeatOn = false;
-      document.getElementById("repeatStatus").textContent = "OFF";
-      clearTimeout(timer);
-      clearTimeout(beepTimer);
-      document.getElementById("status").textContent = "Timer Restarted";
-    }
+    if (repeatOn) scheduleNextRep();
+  }, 3000);
+}
 
-    function updateParTime() {
-      parTime = parseFloat(document.getElementById("parTimeInput").value);
-      if (isNaN(parTime)) parTime = 0.0;
-      parTime = Math.max(0, Math.min(10, parTime));
+function stopTimer() {
+  // Reset repetitions and stop repeat
+  reps = 0;
+  repeatOn = false;
+  document.getElementById("repeatStatus").textContent = "OFF";
+  clearTimeout(timer);
+  clearTimeout(beepTimer);
+  document.getElementById("status").textContent = "Timer Restarted";
+}
+
+function updateParTime() {
+  parTime = parseFloat(document.getElementById("parTimeInput").value);
+  if (isNaN(parTime)) parTime = 0.0;
+  parTime = Math.max(0, Math.min(10, parTime));
+  document.getElementById("parTimeInput").value = parTime.toFixed(1);
+}
+
+function toggleRepeat() {
+  repeatOn = !repeatOn;
+  document.getElementById("repeatStatus").textContent = repeatOn ? "ON" : "OFF";
+}
+
+function updateRepeatDelay() {
+  repeatDelay = parseFloat(document.getElementById("repeatDelayInput").value);
+  if (isNaN(repeatDelay)) repeatDelay = 3.0;
+  repeatDelay = Math.max(0, Math.min(10, repeatDelay));
+  document.getElementById("repeatDelayInput").value = repeatDelay.toFixed(1);
+}
+
+function toggleChaseClock() {
+  chaseClockOn = !chaseClockOn;
+  document.getElementById("chaseClockStatus").textContent = chaseClockOn ? "ON" : "OFF";
+}
+
+function scheduleNextRep() {
+  reps++;
+
+  let totalDelay = parTime > 0 ? (parTime * 1000) + (repeatDelay * 1000) : repeatDelay * 1000;
+
+  timer = setTimeout(() => {
+    if (chaseClockOn && reps % 5 === 0 && parTime > 0.2) {
+      parTime -= 0.2;
       document.getElementById("parTimeInput").value = parTime.toFixed(1);
     }
+    startTimer();
+  }, totalDelay);
+}
 
-    function toggleRepeat() {
-      repeatOn = !repeatOn;
-      document.getElementById("repeatStatus").textContent = repeatOn ? "ON" : "OFF";
-    }
+// Add both touch and click event listeners for mobile devices
+function addEventListeners() {
+  const startBtn = document.getElementById("startBtn");
+  const stopBtn = document.getElementById("stopBtn");
 
-    function updateRepeatDelay() {
-      repeatDelay = parseFloat(document.getElementById("repeatDelayInput").value);
-      if (isNaN(repeatDelay)) repeatDelay = 3.0;
-      repeatDelay = Math.max(0, Math.min(10, repeatDelay));
-      document.getElementById("repeatDelayInput").value = repeatDelay.toFixed(1);
-    }
+  startBtn.addEventListener("click", startTimer);
+  stopBtn.addEventListener("click", stopTimer);
 
-    function toggleChaseClock() {
-      chaseClockOn = !chaseClockOn;
-      document.getElementById("chaseClockStatus").textContent = chaseClockOn ? "ON" : "OFF";
-    }
+  // Mobile touch events
+  startBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    startTimer();
+  });
 
-    function scheduleNextRep() {
-      reps++;
+  stopBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    stopTimer();
+  });
+}
 
-      let totalDelay = parTime > 0 ? (parTime * 1000) + (repeatDelay * 1000) : repeatDelay * 1000;
-
-      timer = setTimeout(() => {
-        if (chaseClockOn && reps % 5 === 0 && parTime > 0.2) {
-          parTime -= 0.2;
-          document.getElementById("parTimeInput").value = parTime.toFixed(1);
-        }
-        startTimer();
-      }, totalDelay);
-    }
-
-    document.getElementById("startBtn").addEventListener("click", startTimer);
-    document.getElementById("stopBtn").addEventListener("click", stopTimer);
+document.addEventListener('DOMContentLoaded', addEventListeners);
   </script>
 </body>
 </html>
