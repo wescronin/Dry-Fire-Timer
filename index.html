@@ -215,13 +215,22 @@
 }
 // Add both touch and click event listeners for mobile devices
 function addEventListeners() {
+  function addEventListeners() {
   const startBtn = document.getElementById("startBtn");
   const stopBtn = document.getElementById("stopBtn");
 
-  startBtn.addEventListener("click", startTimer);
-  stopBtn.addEventListener("click", stopTimer);
+  // Handle both touch and click events
+  startBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    startTimer();
+  });
 
-  // Mobile touch events
+  stopBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    stopTimer();
+  });
+
+  // Handle touch events for mobile devices
   startBtn.addEventListener("touchstart", (e) => {
     e.preventDefault();
     startTimer();
@@ -233,9 +242,9 @@ function addEventListeners() {
   });
 }
 
-    document.addEventListener('DOMContentLoaded', addEventListeners);
-    document.getElementById("startBtn").addEventListener("click", startTimer);
-    document.getElementById("stopBtn").addEventListener("click", stopTimer);
+document.getElementById("startBtn").addEventListener("click", startTimer);
+document.getElementById("stopBtn").addEventListener("click", stopTimer);
+
   </script>
 </body>
 </html>
