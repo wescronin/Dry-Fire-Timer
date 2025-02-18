@@ -5,7 +5,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
-<meta charset="UTF-8">
+ <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dry-Fire Shot Timer</title>
   <style>
@@ -15,6 +15,8 @@
       background-color: #2f2f2f;
       color: #fff;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
     .container {
       max-width: 90%;
@@ -22,11 +24,12 @@
       background-color: #3b3b3b;
       padding: 20px;
       border-radius: 8px;
+      box-sizing: border-box;
     }
     h1 {
       font-family: 'Arial', sans-serif;
       color: #1e90ff;
-      font-size: 3em;
+      font-size: 2.5em;
     }
     h2 {
       font-family: 'Aladin', cursive;
@@ -34,7 +37,7 @@
       color: #1e90ff;
     }
     button {
-      width: 40%;
+      width: 80%;
       padding: 12px;
       margin: 10px;
       border-radius: 5px;
@@ -42,6 +45,7 @@
       color: white;
       font-weight: bold;
       font-size: 1.2em;
+      max-width: 250px;
     }
     button:hover {
       background-color: #187bcd;
@@ -82,12 +86,25 @@
       margin: 0 10px;
     }
     input[type="number"] {
-      width: 80px;
+      width: 80%;
+      max-width: 150px;
       padding: 10px;
       margin: 20px;
       font-size: 1.2em;
       border-radius: 5px;
       text-align: center;
+    }
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+      h2 {
+        font-size: 1.2em;
+      }
+      button {
+        width: 90%;
+        max-width: 220px;
+      }
     }
   </style>
 </head>
@@ -128,7 +145,7 @@
     <a href="https://www.youtube.com/usuckatshooting" target="_blank">YouTube</a><br>
     <a href="https://usuckatshooting.bigcartel.com/" target="_blank">Support Me</a>
   </div>
-    
+
   <script>
     let parTime = 0.0;
     let repeatOn = false;
@@ -167,7 +184,6 @@
     }
 
     function stopTimer() {
-      // Reset repetitions and stop repeat
       reps = 0;
       repeatOn = false;
       document.getElementById("repeatStatus").textContent = "OFF";
@@ -201,22 +217,27 @@
     }
 
     function scheduleNextRep() {
-  reps++;
-
-  let totalDelay = parTime > 0 ? (parTime * 1000) + (repeatDelay * 1000) : repeatDelay * 1000;
-
-  timer = setTimeout(() => {
-    if (chaseClockOn && reps % 5 === 0 && parTime > 0.2) {
-      parTime -= 0.2;
-      document.getElementById("parTimeInput").value = parTime.toFixed(1);
+      reps++;
+      let totalDelay = parTime > 0 ? (parTime * 1000) + (repeatDelay * 1000) : repeatDelay * 1000;
+      timer = setTimeout(() => {
+        if (chaseClockOn && reps % 5 === 0 && parTime > 0.2) {
+          parTime -= 0.2;
+          document.getElementById("parTimeInput").value = parTime.toFixed(1);
+        }
+        startTimer();
+      }, totalDelay);
     }
-    startTimer();
-  }, totalDelay);
-}
-
 
     document.getElementById("startBtn").addEventListener("click", startTimer);
     document.getElementById("stopBtn").addEventListener("click", stopTimer);
+    document.getElementById("startBtn").addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      startTimer();
+    });
+    document.getElementById("stopBtn").addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      stopTimer();
+    });
   </script>
 </body>
 </html>
