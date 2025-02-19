@@ -67,12 +67,14 @@
       transition: background-color 0.3s, transform 0.2s;
       box-shadow: 0 0 20px rgba(30, 144, 255, 0.5);
     }
-    button:active {
+    button:disabled {
+      background-color: #444;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    button:active:not(:disabled) {
       background-color: #187bcd;
       transform: scale(0.95);
-    }
-    #startBtn.powered-on {
-      background-color: #32cd32;
     }
     .settings {
       margin-top: 20px;
@@ -178,10 +180,6 @@
       font-size: 0.8em;
       color: #bbb;
       margin: 5px 0 0 0;
-      display: none;
-    }
-    .info-dropdown[open] p {
-      display: block;
     }
   </style>
 </head>
@@ -193,9 +191,12 @@
     <h1>Dry-Fire Shot Timer</h1>
     <h2>HF Genie</h2>
 
+    <!-- Power Button -->
+    <button id="powerBtn">Power On</button>
+
     <!-- Start Delay Toggle -->
     <div class="toggle-switch">
-      <input type="checkbox" id="startDelayToggle" />
+      <input type="checkbox" id="startDelayToggle" disabled />
       <label for="startDelayToggle"></label>
       <span>Start Delay</span>
     </div>
@@ -205,22 +206,22 @@
 
     <!-- Start and Stop Buttons -->
     <div class="controls">
-      <button id="startBtn">Power On</button>
-      <button id="stopBtn">Stop / Reset</button>
+      <button id="startBtn" disabled>Start</button>
+      <button id="stopBtn" disabled>Stop / Reset</button>
     </div>
 
     <!-- Settings -->
     <div class="settings">
       <h3>Par Time</h3>
-      <input type="number" id="parTimeInput" value="0.0" step="0.1" min="0" max="10" onchange="updateParTime()" />
+      <input type="number" id="parTimeInput" value="0.0" step="0.1" min="0" max="10" onchange="updateParTime()" disabled />
 
       <h3>Delay Between Reps</h3>
-      <input type="number" id="repeatDelayInput" value="3.0" step="0.5" min="0" max="10" onchange="updateRepeatDelay()" />
+      <input type="number" id="repeatDelayInput" value="3.0" step="0.5" min="0" max="10" onchange="updateRepeatDelay()" disabled />
 
-      <button onclick="toggleRepeat()">Toggle Repeat</button>
+      <button onclick="toggleRepeat()" disabled>Toggle Repeat</button>
       <p id="repeatStatus">OFF</p>
 
-      <button onclick="toggleChaseClock()">Chase the Clock</button>
+      <button onclick="toggleChaseClock()" disabled>Chase the Clock</button>
       <p id="chaseClockStatus">OFF</p>
 
       <!-- Info Dropdown with Icon -->
@@ -337,14 +338,34 @@
 
     function togglePower() {
       isPoweredOn = !isPoweredOn;
+      const powerBtn = document.getElementById("powerBtn");
       const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const startDelayToggle = document.getElementById("startDelayToggle");
+      const parTimeInput = document.getElementById("parTimeInput");
+      const repeatDelayInput = document.getElementById("repeatDelayInput");
+      const repeatBtn = document.querySelector('button[onclick="toggleRepeat()"]');
+      const chaseClockBtn = document.querySelector('button[onclick="toggleChaseClock()"]');
+
       if (isPoweredOn) {
-        startBtn.textContent = "Start";
-        startBtn.classList.add("powered-on");
+        powerBtn.textContent = "Power Off";
+        startBtn.disabled = false;
+        stopBtn.disabled = false;
+        startDelayToggle.disabled = false;
+        parTimeInput.disabled = false;
+        repeatDelayInput.disabled = false;
+        repeatBtn.disabled = false;
+        chaseClockBtn.disabled = false;
         speak("Hit Factor Genie"); // First voice prompt to enable audio
       } else {
-        startBtn.textContent = "Power On";
-        startBtn.classList.remove("powered-on");
+        powerBtn.textContent = "Power On";
+        startBtn.disabled = true;
+        stopBtn.disabled = true;
+        startDelayToggle.disabled = true;
+        parTimeInput.disabled = true;
+        repeatDelayInput.disabled = true;
+        repeatBtn.disabled = true;
+        chaseClockBtn.disabled = true;
         stopTimer();
       }
     }
@@ -392,17 +413,19 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
+      const powerBtn = document.getElementById("powerBtn");
       const startBtn = document.getElementById("startBtn");
       const stopBtn = document.getElementById("stopBtn");
 
+      powerBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        togglePower();
+      });
+
       startBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        if (!isPoweredOn) {
-          togglePower();
-        } else {
-          startDelay = document.getElementById("startDelayToggle").checked;
-          startTimer();
-        }
+        startDelay = document.getElementById("startDelayToggle").checked;
+        startTimer();
       });
 
       stopBtn.addEventListener("click", (e) => {
@@ -412,12 +435,8 @@
 
       startBtn.addEventListener("touchstart", (e) => {
         e.preventDefault();
-        if (!isPoweredOn) {
-          togglePower();
-        } else {
-          startDelay = document.getElementById("startDelayToggle").checked;
-          startTimer();
-        }
+        startDelay = document.getElementById("startDelayToggle").checked;
+        startTimer();
       });
 
       stopBtn.addEventListener("touchstart", (e) => {
