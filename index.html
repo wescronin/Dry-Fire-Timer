@@ -383,31 +383,35 @@
     });
   });
 
-const powerSound = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
+const powerSound = new Audio('https://www.soundjay.com/buttons/sounds/button-46.mp3');
 powerSound.load(); // Ensure audio is preloaded
 
-function togglePower() {
-  // Ensure sound plays only if it's ready
-  if (powerSound.readyState >= 2) {
-    powerSound.currentTime = 0; // Reset sound to the start
-    powerSound.play().catch(e => console.error("Audio play failed:", e));
+
+  function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    speechSynthesis.speak(utterance);
   }
 
-  const powerBtn = document.getElementById('powerBtn');
-  const isOn = powerBtn.dataset.on === 'true';
+  function togglePower() {
+    powerSound.play();
+    const powerBtn = document.getElementById('powerBtn');
+    const isOn = powerBtn.dataset.on === 'true';
 
-  if (isOn) {
-    powerBtn.style.background = 'linear-gradient(145deg, #1e90ff, #187bcd)';
-    powerBtn.style.boxShadow = '0 0 30px rgba(30, 144, 255, 0.9)';
-    powerBtn.dataset.on = 'false';
-    powerBtn.querySelector('span').textContent = 'Power On';
-  } else {
-    powerBtn.style.background = 'linear-gradient(145deg, #32cd32, #2ea62e)';
-    powerBtn.style.boxShadow = '0 0 35px rgba(50, 205, 50, 1)';
-    powerBtn.dataset.on = 'true';
-    powerBtn.querySelector('span').textContent = 'Power Off';
+    if (isOn) {
+      powerBtn.style.background = 'linear-gradient(145deg, #1e90ff, #187bcd)';
+      powerBtn.style.boxShadow = '0 0 30px rgba(30, 144, 255, 0.9)';
+      powerBtn.dataset.on = 'false';
+      powerBtn.querySelector('span').textContent = 'Power On';
+      speak('');
+    } else {
+      powerBtn.style.background = 'linear-gradient(145deg, #32cd32, #2ea62e)';
+      powerBtn.style.boxShadow = '0 0 35px rgba(50, 205, 50, 1)';
+      powerBtn.dataset.on = 'true';
+      powerBtn.querySelector('span').textContent = 'Power Off';
+      speak('Hit Factor Gi knee');
+    }
   }
-}
 
 </script>
 
