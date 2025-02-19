@@ -29,7 +29,7 @@
       width: 90%;
       max-width: 350px;
       position: relative;
-      margin-top: 60px; /* Adjusted to lower the title */
+      margin-top: 80px; /* Adjusted to lower the title further */
     }
     h1 {
       color: #1e90ff;
@@ -118,6 +118,48 @@
       font-size: 1.5em;
       color: #fff;
     }
+    /* Custom Toggle Switch */
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 15px 0;
+    }
+    .toggle-switch input {
+      display: none;
+    }
+    .toggle-switch label {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+      background-color: #444;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .toggle-switch label:after {
+      content: '';
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      background-color: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s;
+    }
+    .toggle-switch input:checked + label {
+      background-color: #1e90ff;
+    }
+    .toggle-switch input:checked + label:after {
+      transform: translateX(30px);
+    }
+    .toggle-switch span {
+      margin-left: 10px;
+      font-size: 1em;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -129,8 +171,10 @@
     <h2>HF Genie</h2>
 
     <!-- Start Delay Toggle -->
-    <div>
-      <input type="checkbox" id="startDelayToggle" /> Start Delay
+    <div class="toggle-switch">
+      <input type="checkbox" id="startDelayToggle" />
+      <label for="startDelayToggle"></label>
+      <span>Start Delay</span>
     </div>
 
     <!-- Timer Display -->
@@ -181,11 +225,9 @@
     let isPoweredOn = false;
 
     const beepAudio = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
-    const powerSound = new Audio('https://www.soundjay.com/buttons/sounds/button-46.mp3');
 
     // Ensure audio plays in the background
     beepAudio.loop = false;
-    powerSound.loop = false;
 
     // Speech Synthesis for Voice Prompts
     function speak(text) {
@@ -274,7 +316,6 @@
         startBtn.classList.remove("powered-on");
         stopTimer();
       }
-      powerSound.play();
     }
 
     function updateParTime() {
