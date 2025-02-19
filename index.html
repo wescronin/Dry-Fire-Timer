@@ -29,7 +29,7 @@
       width: 90%;
       max-width: 350px;
       position: relative;
-      margin-top: 80px; /* Adjusted to lower the title further */
+      margin-top: 100px; /* Adjusted to lower the title further */
     }
     h1 {
       color: #1e90ff;
@@ -96,11 +96,15 @@
     .footer a {
       color: #1e90ff;
       text-decoration: none;
-      display: block;
-      margin: 5px 0;
+      display: inline-block;
+      margin: 5px 10px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
     }
     .footer a:hover {
-      text-decoration: underline;
+      background-color: #1e90ff;
+      color: #fff;
     }
     .genie-lamp {
       position: absolute;
@@ -160,6 +164,25 @@
       font-size: 1em;
       color: #fff;
     }
+    /* Info Dropdown with Icon */
+    .info-dropdown {
+      margin-top: 10px;
+      text-align: center;
+    }
+    .info-dropdown summary {
+      font-size: 1.2em;
+      cursor: pointer;
+      color: #1e90ff;
+    }
+    .info-dropdown p {
+      font-size: 0.8em;
+      color: #bbb;
+      margin: 5px 0 0 0;
+      display: none;
+    }
+    .info-dropdown[open] p {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -199,6 +222,14 @@
 
       <button onclick="toggleChaseClock()">Chase the Clock</button>
       <p id="chaseClockStatus">OFF</p>
+
+      <!-- Info Dropdown with Icon -->
+      <div class="info-dropdown">
+        <details>
+          <summary>ℹ️</summary>
+          <p>Chase the Clock: Every 5 repetitions, the par time decreases by 0.2 seconds.</p>
+        </details>
+      </div>
     </div>
 
     <!-- Footer Links -->
