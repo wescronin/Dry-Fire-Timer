@@ -302,7 +302,7 @@
     <div class="toggle-switch">
       <input type="checkbox" id="startDelayToggle" disabled />
       <label for="startDelayToggle"></label>
-      <span>Start Delay</span>
+      <span>Delay</span>
     </div>
 
     <!-- Timer Display -->
@@ -403,45 +403,44 @@
     }
 
     function startTimer() {
-      if (!isPoweredOn) return;
+  if (!isPoweredOn) return;
 
-      if (startDelay) {
-        document.getElementById("status").textContent = "Wait...";
-        setTimeout(() => {
-          document.getElementById("status").textContent = "Stand By...";
-          speak("Stand by");
-          setTimeout(() => {
-            playBeep();
-            triggerHaptic();
-            document.getElementById("status").textContent = "GO!";
-            if (parTime > 0) {
-              beepTimer = setTimeout(() => {
-                playBeep();
-                triggerHaptic();
-              }, parTime * 1000);
-            }
-            if (repeatOn) scheduleNextRep();
-            preventSleep();
-          }, 3000);
-        }, 3000);
-      } else {
-        document.getElementById("status").textContent = "Stand By...";
-        speak("Stand by");
-        setTimeout(() => {
+  // Always show "Stand By" immediately
+  document.getElementById("status").textContent = "Stand By...";
+  speak("Stand by");
+
+  // If start delay is enabled, wait before playing the beep
+  if (startDelay) {
+    setTimeout(() => {
+      playBeep();
+      triggerHaptic();
+      document.getElementById("status").textContent = "GO!";
+      if (parTime > 0) {
+        beepTimer = setTimeout(() => {
           playBeep();
           triggerHaptic();
-          document.getElementById("status").textContent = "GO!";
-          if (parTime > 0) {
-            beepTimer = setTimeout(() => {
-              playBeep();
-              triggerHaptic();
-            }, parTime * 1000);
-          }
-          if (repeatOn) scheduleNextRep();
-          preventSleep();
-        }, 3000);
+        }, parTime * 1000);
       }
-    }
+      if (repeatOn) scheduleNextRep();
+      preventSleep();
+    }, 5000); // 3-second delay after "Stand By"
+  } else {
+    // No start delay, proceed immediately
+    setTimeout(() => {
+      playBeep();
+      triggerHaptic();
+      document.getElementById("status").textContent = "GO!";
+      if (parTime > 0) {
+        beepTimer = setTimeout(() => {
+          playBeep();
+          triggerHaptic();
+        }, parTime * 1000);
+      }
+      if (repeatOn) scheduleNextRep();
+      preventSleep();
+    }, 3000); // 1-second delay after "Stand By" (default)
+  }
+}
 
     function stopTimer() {
       reps = 0;
