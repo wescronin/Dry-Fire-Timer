@@ -255,6 +255,22 @@
     let chaseClockOn = false;
     let startDelay = false;
     let isPoweredOn = false;
+let keepAwakeAudio;
+
+function startKeepAwake() {
+  if (!keepAwakeAudio) {
+    keepAwakeAudio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjI5AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjI5AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA');
+    keepAwakeAudio.loop = true;
+  }
+  keepAwakeAudio.play();
+}
+
+function stopKeepAwake() {
+  if (keepAwakeAudio) {
+    keepAwakeAudio.pause();
+    keepAwakeAudio.currentTime = 0;
+  }
+}
 
     const beepAudio = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
 
