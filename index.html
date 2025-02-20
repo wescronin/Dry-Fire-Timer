@@ -9,6 +9,50 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
   <style>
+/* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: #1a1a1a;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 0 30px rgba(30, 144, 255, 0.3);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      color: #fff;
+    }
+    .modal-content a {
+      color: #1e90ff;
+      text-decoration: none;
+    }
+    .modal-content a:hover {
+      text-decoration: underline;
+    }
+    .modal-content button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border-radius: 15px;
+      background-color: #1e90ff;
+      color: white;
+      font-size: 1em;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .modal-content button:hover {
+      background-color: #187bcd;
+    }
     body {
       font-family: 'Arial', sans-serif;
       background-color: #0a0a0a;
@@ -20,6 +64,46 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+ }
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .popup-content {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(30, 144, 255, 0.5);
+      max-width: 90%;
+      text-align: left;
+    }
+    .popup-content h2 {
+      color: #1e90ff;
+    }
+    .popup-content a {
+      color: #1e90ff;
+      text-decoration: none;
+    }
+    .popup-content a:hover {
+      text-decoration: underline;
+    }
+    .popup-content button {
+      background: #1e90ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    
     }
     .container {
       background-color: #1a1a1a;
@@ -184,6 +268,26 @@
   </style>
 </head>
 <body>
+ <!-- Modal Pop-up -->
+  <div id="welcomeModal" class="modal">
+    <div class="modal-content">
+      <h2>Welcome to Hit Factor Genie's Dry-Fire Timer!</h2>
+      <p>
+        This free tool works best on certain mobile browsers. If it’s not functioning properly, try switching to a different browser—Safari tends to work reliably.
+      </p>
+      <p>
+        Currently, when using the repeat feature, only the beeps will play if your screen goes dark. To continue hearing the "Stand By" voice prompt, adjust your phone’s settings to keep the screen on.
+      </p>
+      <p>
+        Please also enjoy the free <a href="https://hit-factor-genie.netlify.app/" target="_blank">Hit Factor Genie</a> tool!
+      </p>
+      <p>
+        For feedback, reach out to <a href="https://instagram.com/wes.cronin" target="_blank">Wes Cronin</a> or <a href="https://instagram.com/usuckatshooting" target="_blank">U Suck At Shooting</a> on Instagram.
+      </p>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
   <div class="container">
     <!-- Genie Lamp Icon -->
     <div class="genie-lamp">🧞‍♂️</div>
@@ -245,6 +349,18 @@
   </div>
 
   <script>
+
+// Show the modal when the page loads
+    document.addEventListener("DOMContentLoaded", function() {
+      const modal = document.getElementById("welcomeModal");
+      modal.style.display = "flex";
+    });
+    
+    // Close the modal
+    function closeModal() {
+      const modal = document.getElementById("welcomeModal");
+      modal.style.display = "none";
+    }
     let parTime = 0.0;
     let repeatOn = false;
     let repeatDelay = 3.0;
@@ -255,22 +371,7 @@
     let chaseClockOn = false;
     let startDelay = false;
     let isPoweredOn = false;
-let keepAwakeAudio;
 
-function startKeepAwake() {
-  if (!keepAwakeAudio) {
-    keepAwakeAudio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjI5AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjI5AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA');
-    keepAwakeAudio.loop = true;
-  }
-  keepAwakeAudio.play();
-}
-
-function stopKeepAwake() {
-  if (keepAwakeAudio) {
-    keepAwakeAudio.pause();
-    keepAwakeAudio.currentTime = 0;
-  }
-}
 
     const beepAudio = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
 
