@@ -256,8 +256,10 @@
     let startDelay = false;
     let isPoweredOn = false;
 
-    // Web Audio API for beeps
-    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const beepAudio = new Audio('https://www.soundjay.com/buttons/sounds/beep-04.mp3');
+
+    // Ensure audio plays in the background
+    beepAudio.loop = false;
 
     // Speech Synthesis for Voice Prompts
     function speak(text) {
@@ -267,14 +269,8 @@
     }
 
     function playBeep() {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      oscillator.frequency.value = 2900; // Frequency of the beep
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      gainNode.gain.value = 1.5; // Volume
-      oscillator.start();
-      oscillator.stop(audioContext.currentTime + 0.3); // Duration of the beep
+      beepAudio.play();
+      beepAudio.currentTime = 0;
     }
 
     function triggerHaptic() {
@@ -284,7 +280,6 @@
     async function preventSleep() {
       try {
         wakeLock = await navigator.wakeLock.request('screen');
-        console.log('Screen Wake Lock is active');
       } catch (err) {
         console.error('Screen Wake Lock failed:', err);
       }
@@ -338,10 +333,7 @@
       clearTimeout(timer);
       clearTimeout(beepTimer);
       document.getElementById("status").textContent = "Ready";
-      if (wakeLock) {
-        wakeLock.release();
-        wakeLock = null;
-      }
+      if (wakeLock) wakeLock.release();
     }
 
     function togglePower() {
